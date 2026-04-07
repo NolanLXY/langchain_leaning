@@ -19,6 +19,7 @@ from langchain.tools import tool
 
 # ==================== 1. 工具定义 ====================
 
+
 @tool
 def get_weather(location: str) -> str:
     """
@@ -80,6 +81,7 @@ def calculate(a: float, b: float, op: str) -> str:
 
 # ==================== 2. 模型初始化 ====================
 
+
 def build_model():
     """初始化聊天模型，兼容 OpenAI 和阿里云 DashScope"""
     _ = load_dotenv()
@@ -116,6 +118,7 @@ def build_model():
 
 # ==================== 3. Agent 调用示例 ====================
 
+
 def demo_weather_agent(model) -> None:
     """Demo 1: 天气查询 agent"""
     print("\n" + "=" * 18 + " 天气查询 Agent " + "=" * 18)
@@ -129,9 +132,9 @@ def demo_weather_agent(model) -> None:
     )
 
     # 调用 agent
-    result = agent.invoke({
-        "messages": [{"role": "user", "content": "北京今天的天气怎么样？"}]
-    })
+    result = agent.invoke(
+        {"messages": [{"role": "user", "content": "北京今天的天气怎么样？"}]}
+    )
 
     # 打印最终回复（最后一条 AI 消息）
     final_message = result["messages"][-1]
@@ -148,9 +151,9 @@ def demo_calculator_agent(model) -> None:
         system_prompt="你是一个计算器助手。使用提供的 calculate 工具执行数学运算。",
     )
 
-    result = agent.invoke({
-        "messages": [{"role": "user", "content": "帮我算一下 125 乘以 8 等于多少？"}]
-    })
+    result = agent.invoke(
+        {"messages": [{"role": "user", "content": "帮我算一下 125 乘以 8 等于多少？"}]}
+    )
 
     final_message = result["messages"][-1]
     print(f"Agent 回复：{final_message.content}")
@@ -167,16 +170,19 @@ def demo_multi_turn_agent(model) -> None:
     )
 
     # 第一轮：天气查询
-    result1 = agent.invoke({
-        "messages": [{"role": "user", "content": "上海天气如何？"}]
-    })
+    result1 = agent.invoke(
+        {"messages": [{"role": "user", "content": "上海天气如何？"}]}
+    )
     print("用户：上海天气如何？")
     print(f"Agent：{result1['messages'][-1].content}\n")
 
     # 第二轮：计算（agent 会记住之前的对话上下文）
-    result2 = agent.invoke({
-        "messages": result1["messages"] + [{"role": "user", "content": "那 99 加 101 等于多少？"}]
-    })
+    result2 = agent.invoke(
+        {
+            "messages": result1["messages"]
+            + [{"role": "user", "content": "那 99 加 101 等于多少？"}]
+        }
+    )
     print("用户：那 99 加 101 等于多少？")
     print(f"Agent：{result2['messages'][-1].content}")
 
@@ -195,8 +201,15 @@ def demo_stream_agent(model) -> None:
 
     # stream_mode="values" 返回每一步的完整状态
     for chunk in agent.stream(
-        {"messages": [{"role": "user", "content": "广州天气怎么样？顺便帮我算一下 50 除以 4。"}]},
-        stream_mode="values"
+        {
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "广州天气怎么样？顺便帮我算一下 50 除以 4。",
+                }
+            ]
+        },
+        stream_mode="values",
     ):
         messages = chunk.get("messages", [])
         if messages:
@@ -204,7 +217,9 @@ def demo_stream_agent(model) -> None:
             # 打印工具调用
             if hasattr(latest, "tool_calls") and latest.tool_calls:
                 for tc in latest.tool_calls:
-                    print(f"\n[调用工具] {tc['name']}: {tc['args']}", end="", flush=True)
+                    print(
+                        f"\n[调用工具] {tc['name']}: {tc['args']}", end="", flush=True
+                    )
             # 打印文本输出
             elif hasattr(latest, "content") and latest.content:
                 print(latest.content, end="", flush=True)
@@ -213,21 +228,17 @@ def demo_stream_agent(model) -> None:
 
 # ==================== 4. 主入口 ====================
 
+
 def main() -> None:
     """按顺序运行所有 demo"""
     model = build_model()
 
-    demo_weather_agent(model)       # 单工具：天气查询
-    demo_calculator_agent(model)   # 单工具：计算器
-    demo_multi_turn_agent(model)   # 多工具 + 多轮对话
-    demo_stream_agent(model)       # 流式输出
+    demo_weather_agent(model)  # 单工具：天气查询
+    demo_calculator_agent(model)  # 单工具：计算器
+    demo_multi_turn_agent(model)  # 多工具 + 多轮对话
+    demo_stream_agent(model)  # 流式输出
 
     print("\n[*] 所有 demo 运行完成！")
-    print("\n[*] 关键概念回顾：")
-    print("  1. @tool 装饰器：将 Python 函数转换为 LangChain 工具")
-    print("  2. create_agent：创建 agent，自动处理 ReAct 循环")
-    print("  3. agent.invoke()：调用 agent，传入消息列表")
-    print("  4. 多工具：agent 会根据问题自动选择合适的工具")
 
 
 if __name__ == "__main__":
