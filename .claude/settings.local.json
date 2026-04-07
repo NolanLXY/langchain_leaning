@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python examples/day02_models/demo_02_tool_calling_agent.py)"
+    ]
+  }
+}

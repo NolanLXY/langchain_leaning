@@ -1,0 +1,18 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "extraPaths": [
+    ".venv/Lib/site-packages"
+  ],
+  "include": [
+    "examples",
+    "main.py"
+  ],
+  "typeCheckingMode": "basic",
+  "reportUnknownVariableType": false,
+  "reportUnknownMemberType": false,
+  "reportAny": false,
+  "reportMissingParameterType": false,
+  "reportUnknownArgumentType": false,
+  "reportUnknownParameterType": false
+}
