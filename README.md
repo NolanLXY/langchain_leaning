@@ -1,6 +1,6 @@
 # LangChain/LangGraph 快速学习项目
 
-> 在 AI Agent 时代，不会用 AI 学习新技术就是落后
+> 在 AI Agent 时代，学会使用AI作为你的工具，学会使用 AI 学习来新技术；让他成为你的助手，而不是取代你
 
 ## 项目简介
 
